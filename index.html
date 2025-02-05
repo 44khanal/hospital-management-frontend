@@ -192,7 +192,7 @@
             </div>
             <!-- Board Member 3 -->
             <div class="bg-white shadow-lg rounded-lg overflow-hidden transform hover:scale-105 transition">
-                <img src="https://scontent.fbwa1-1.fna.fbcdn.net/v/t39.30808-1/472212567_575404395210402_5913735738464483946_n.jpg?stp=c128.0.824.824a_dst-jpg_s200x200_tt6&_nc_cat=100&ccb=1-7&_nc_sid=1d2534&_nc_ohc=aWgFZEXBCJgQ7kNvgFjaDxP&_nc_oc=AdhfVM9GU4BUT5evsVv8CO2zobFhnQ9YjCLgiNlVOn7nx0gcVpTOj1kcp_rCjl9TqwAYWsUkt3tf482a_giUjM4R&_nc_zt=24&_nc_ht=scontent.fbwa1-1.fna&_nc_gid=A_NQC6Qplb05-82XJCEXhVY&oh=00_AYAIv6olPkNIHIaPRYyZIG0t_9NNOj1EQRhn_SXdQnIRhQ&oe=6792F293" alt="Nirajan Chaudhary" class="w-full h-48 object-cover">
+                <img src="https://via.placeholder.com/300x300?text=Nirajan+Chaudhary" alt="Nirajan Chaudhary" class="w-full h-48 object-cover">
                 <div class="p-4">
                     <h4 class="text-xl font-bold text-blue-600">Nirajan Chaudhary</h4>
                     <p class="text-gray-700">Committed to upholding our values of integrity, innovation, and excellence in healthcare services.</p>
@@ -264,8 +264,6 @@
 
 
 </section>
-
-
         <section id="patient-details" class="fade-in hidden bg-white bg-opacity-90 rounded-lg shadow-lg p-6">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-3xl font-bold text-blue-700">Patient Details</h2>
@@ -273,11 +271,11 @@
             </div>
             <form id="patient-form" class="hidden bg-gray-100 p-4 rounded-lg shadow-lg mb-4">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <input type="text" id="patient-name" placeholder="Name" class="w-full px-4 py-2 border rounded">
-                    <input type="number" id="patient-age" placeholder="Age" class="w-full px-4 py-2 border rounded">
-                    <input type="text" id="patient-contact" placeholder="Contact" class="w-full px-4 py-2 border rounded">
+                    <input type="text" id="patient-name" placeholder="Name" class="w-full px-4 py-2 border rounded text-blue-700">
+                    <input type="number" id="patient-age" placeholder="Age" class="w-full px-4 py-2 border rounded text-blue-700">
+                    <input type="text" id="patient-contact" placeholder="Contact" class="w-full px-4 py-2 border rounded text-blue-700">
                 </div>
-                <button type="button" onclick="addPatient()" class="mt-4 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">Save</button>
+                <button type="button" onclick="savePatient()" class="mt-4 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">Save</button>
             </form>
             <table class="w-full table-auto border-collapse border border-gray-300">
                 <thead class="bg-blue-700 text-white">
@@ -292,6 +290,94 @@
                 </tbody>
             </table>
         </section>
+        <script>
+            // References to key elements
+            const patientForm = document.getElementById("patient-form");
+            const patientNameInput = document.getElementById("patient-name");
+            const patientAgeInput = document.getElementById("patient-age");
+            const patientContactInput = document.getElementById("patient-contact");
+            const patientTable = document.getElementById("patient-table");
+        
+            let editingRow = null; // Keeps track of the row being edited
+        
+            // Show or hide the patient form
+            function showPatientForm(editRow = null) {
+                if (editRow) {
+                    // If editing, populate the form fields
+                    editingRow = editRow;
+                    const cells = editRow.children;
+                    patientNameInput.value = cells[0].innerText;
+                    patientAgeInput.value = cells[1].innerText;
+                    patientContactInput.value = cells[2].innerText;
+                } else {
+                    // Reset form fields if not editing
+                    editingRow = null;
+                    patientNameInput.value = "";
+                    patientAgeInput.value = "";
+                    patientContactInput.value = "";
+                }
+        
+                // Toggle form visibility
+                patientForm.classList.toggle("hidden");
+            }
+        
+            // Add or update a patient
+            function savePatient() {
+                const name = patientNameInput.value.trim();
+                const age = patientAgeInput.value.trim();
+                const contact = patientContactInput.value.trim();
+        
+                // Validate inputs
+                if (!name || !age || !contact) {
+                    alert("Please fill in all fields.");
+                    return;
+                }
+        
+                if (editingRow) {
+                    // Update existing row
+                    editingRow.children[0].innerText = name;
+                    editingRow.children[1].innerText = age;
+                    editingRow.children[2].innerText = contact;
+                    alert("Patient details updated successfully!");
+                } else {
+                    // Add a new row
+                    const newRow = document.createElement("tr");
+                    newRow.innerHTML = `
+                        <td class="px-4 py-2 border text-blue-700">${name}</td>
+                        <td class="px-4 py-2 border text-blue-700">${age}</td>
+                        <td class="px-4 py-2 border text-blue-700">${contact}</td>
+                        <td class="px-4 py-2 border text-center">
+                            <button class="text-blue-600 hover:underline" onclick="editPatient(this)">Edit</button> |
+                            <button class="text-red-600 hover:underline" onclick="deletePatient(this)">Delete</button>
+                        </td>
+                    `;
+                    patientTable.appendChild(newRow);
+                    alert("Patient added successfully!");
+                }
+        
+                // Clear the form and hide it
+                patientForm.classList.add("hidden");
+                editingRow = null;
+                patientNameInput.value = "";
+                patientAgeInput.value = "";
+                patientContactInput.value = "";
+            }
+        
+            // Edit an existing patient
+            function editPatient(button) {
+                const row = button.closest("tr");
+                showPatientForm(row);
+            }
+        
+            // Delete a patient
+            function deletePatient(button) {
+                const row = button.closest("tr");
+                row.remove();
+                alert("Patient deleted successfully!");
+            }
+        </script>
+        
+        
 
         <!-- Reports Section -->
 <section id="reports" class="fade-in hidden bg-white bg-opacity-90 rounded-lg shadow-lg p-6 space-y-8 text-blue-600">
@@ -343,9 +429,9 @@
                 <tr class="hover:bg-gray-100 transition">
                     <td class="p-3 border border-gray-300 text-blue-600">1</td>
                     <td class="p-3 border border-gray-300 text-blue-600">RPT001</td>
-                    <td class="p-3 border border-gray-300 text-blue-600">John Doe</td>
-                    <td class="p-3 border border-gray-300 text-blue-600">2025-01-10</td>
-                    <td class="p-3 border border-gray-300 text-blue-600">Dr. Emily Davis</td>
+                    <td class="p-3 border border-gray-300 text-blue-600">John banega don</td>
+                    <td class="p-3 border border-gray-300 text-blue-600">1/25/2025</td>
+                    <td class="p-3 border border-gray-300 text-blue-600">Dr. Champa</td>
                     <td class="p-3 border border-gray-300">
                         <span class="text-green-600 font-semibold">Completed</span>
                     </td>
@@ -357,9 +443,9 @@
                 <tr class="hover:bg-gray-100 transition">
                     <td class="p-3 border border-gray-300 text-blue-600">2</td>
                     <td class="p-3 border border-gray-300 text-blue-600">RPT002</td>
-                    <td class="p-3 border border-gray-300 text-blue-600">Jane Smith</td>
-                    <td class="p-3 border border-gray-300 text-blue-600">2025-01-09</td>
-                    <td class="p-3 border border-gray-300 text-blue-600">Dr. Alice Johnson</td>
+                    <td class="p-3 border border-gray-300 text-blue-600">Maya Prasad</td>
+                    <td class="p-3 border border-gray-300 text-blue-600">1/25/2025</td>
+                    <td class="p-3 border border-gray-300 text-blue-600">Dr. Hari </td>
                     <td class="p-3 border border-gray-300">
                         <span class="text-yellow-600 font-semibold">Pending</span>
                     </td>
@@ -382,99 +468,393 @@
         </button>
     </div>
 </section>
-
+<script>
+    // References to key elements
+    const searchReports = document.getElementById("searchReports");
+    const filterReports = document.getElementById("filterReports");
+    const downloadReports = document.getElementById("downloadReports");
+    const addReportBtn = document.getElementById("addReport");
+    const reportRows = document.getElementById("reportRows");
+    
+    // Utility to update the table based on search or filter
+    const updateReportsTable = () => {
+        const searchValue = searchReports.value.toLowerCase();
+        const filterValue = filterReports.value;
+        const rows = reportRows.querySelectorAll("tr");
+    
+        rows.forEach((row) => {
+            const reportID = row.querySelector("td:nth-child(2)").textContent.toLowerCase();
+            const patientName = row.querySelector("td:nth-child(3)").textContent.toLowerCase();
+            const status = row.querySelector("td:nth-child(6)").textContent.toLowerCase();
+    
+            const matchesSearch = reportID.includes(searchValue) || patientName.includes(searchValue);
+            const matchesFilter = filterValue === "" || status.includes(filterValue);
+    
+            row.style.display = matchesSearch && matchesFilter ? "" : "none";
+        });
+    };
+    
+    // Event listeners for search and filter
+    searchReports.addEventListener("input", updateReportsTable);
+    filterReports.addEventListener("change", updateReportsTable);
+    
+    // Event listener for downloading reports
+    downloadReports.addEventListener("click", () => {
+        alert("Downloading all reports...");
+        // Implement the file download logic here
+    });
+    
+    // Utility to format date
+    const formatDate = (date) => {
+        const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+        return new Date(date).toLocaleDateString("en-US", options);
+    };
+    
+    // Add a new report
+    addReportBtn.addEventListener("click", () => {
+        const newReportId = `RPT00${reportRows.children.length + 1}`;
+        const patientName = prompt("Enter patient name:");
+        const doctorName = prompt("Enter doctor name:");
+        const status = prompt("Enter report status (Pending/Completed):").toLowerCase();
+    
+        if (!patientName || !doctorName || !["pending", "completed"].includes(status)) {
+            alert("Invalid input. Please try again.");
+            return;
+        }
+    
+        const newRow = document.createElement("tr");
+        newRow.className = "hover:bg-gray-100 transition";
+        newRow.innerHTML = `
+            <td class="p-3 border border-gray-300 text-blue-600">${reportRows.children.length + 1}</td>
+            <td class="p-3 border border-gray-300 text-blue-600">${newReportId}</td>
+            <td class="p-3 border border-gray-300 text-blue-600">${patientName}</td>
+            <td class="p-3 border border-gray-300 text-blue-600">${formatDate(new Date())}</td>
+            <td class="p-3 border border-gray-300 text-blue-600">${doctorName}</td>
+            <td class="p-3 border border-gray-300">
+                <span class="font-semibold text-${status === "completed" ? "green" : "yellow"}-600">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
+            </td>
+            <td class="p-3 border border-gray-300">
+                <button class="text-blue-600 hover:underline edit-report" data-id="${newReportId}">Edit</button> |
+                <button class="text-red-600 hover:underline delete-report" data-id="${newReportId}">Delete</button>
+            </td>
+        `;
+        reportRows.appendChild(newRow);
+        updateReportsTable();
+        alert(`Report ${newReportId} added successfully!`);
+    });
+    
+    // Delegate click events for editing and deleting reports
+    reportRows.addEventListener("click", (event) => {
+        const target = event.target;
+    
+        if (target.classList.contains("edit-report")) {
+            const row = target.closest("tr");
+            const reportId = row.querySelector("td:nth-child(2)").textContent;
+            const patientName = prompt("Enter new patient name:", row.querySelector("td:nth-child(3)").textContent);
+            const doctorName = prompt("Enter new doctor name:", row.querySelector("td:nth-child(5)").textContent);
+            const status = prompt("Enter new status (Pending/Completed):", row.querySelector("td:nth-child(6)").textContent.trim().toLowerCase()).toLowerCase();
+    
+            if (!patientName || !doctorName || !["pending", "completed"].includes(status)) {
+                alert("Invalid input. Please try again.");
+                return;
+            }
+    
+            row.querySelector("td:nth-child(3)").textContent = patientName;
+            row.querySelector("td:nth-child(5)").textContent = doctorName;
+            row.querySelector("td:nth-child(6)").innerHTML = `
+                <span class="font-semibold text-${status === "completed" ? "green" : "yellow"}-600">
+                    ${status.charAt(0).toUpperCase() + status.slice(1)}
+                </span>
+            `;
+            alert(`Report ${reportId} updated successfully!`);
+        }
+    
+        if (target.classList.contains("delete-report")) {
+            const row = target.closest("tr");
+            const reportId = row.querySelector("td:nth-child(2)").textContent;
+    
+            if (confirm(`Are you sure you want to delete report ${reportId}?`)) {
+                row.remove();
+                alert(`Report ${reportId} deleted successfully!`);
+            }
+        }
+    });
+    </script>
+    
 
         <!-- Billing Section -->
-<section id="billing" class="fade-in hidden bg-white bg-opacity-90 rounded-lg shadow-lg p-6 space-y-8">
-    <!-- Title -->
-    <div class="text-center">
-        <h2 class="text-4xl font-bold text-blue-700">Billing Details</h2>
-        <p class="text-gray-700 mt-4">Manage patient invoices and payment details efficiently.</p>
-    </div>
-
-    <!-- Add New Invoice Button -->
-    <div class="text-right">
-        <button
-            id="addInvoice"
-            class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition"
-        >
-            Add New Invoice
-        </button>
-    </div>
-
-    <!-- Billing Table -->
-    <div class="overflow-x-auto mt-6">
-        <table class="table-auto w-full text-left border-collapse border border-gray-300">
-            <thead>
-                <tr class="bg-blue-100 text-blue-700">
-                    <th class="p-3 border border-gray-300">#</th>
-                    <th class="p-3 border border-gray-300">Invoice ID</th>
-                    <th class="p-3 border border-gray-300">Patient Name</th>
-                    <th class="p-3 border border-gray-300">Date</th>
-                    <th class="p-3 border border-gray-300">Total Amount</th>
-                    <th class="p-3 border border-gray-300">Paid</th>
-                    <th class="p-3 border border-gray-300">Balance</th>
-                    <th class="p-3 border border-gray-300">Actions</th>
-                </tr>
-            </thead>
-            <tbody id="billingRows">
-                <!-- Dynamic Rows -->
-                <tr class="hover:bg-gray-100 transition">
-                    <td class="p-3 border border-gray-300 text-blue-600">1</td>
-                    <td class="p-3 border border-gray-300 text-blue-600">INV001</td>
-                    <td class="p-3 border border-gray-300 text-blue-600">John Doe</td>
-                    <td class="p-3 border border-gray-300 text-blue-600">2025-01-10</td>
-                    <td class="p-3 border border-gray-300 text-blue-600">$500</td>
-                    <td class="p-3 border border-gray-300 text-blue-600">$300</td>
-                    <td class="p-3 border border-gray-300 text-blue-600">$200</td>
-                    <td class="p-3 border border-gray-300">
-                        <button class="text-blue-600 hover:underline edit-invoice" data-id="INV001">Edit</button> |
-                        <button class="text-red-600 hover:underline delete-invoice" data-id="INV001">Delete</button>
-                    </td>
-                </tr>
-                <tr class="hover:bg-gray-100 transition">
-                    <td class="p-3 border border-gray-700 text-blue-600">2</td>
-                    <td class="p-3 border border-gray-700 text-blue-600">INV002</td>
-                    <td class="p-3 border border-gray-700 text-blue-600">Jane Smith</td>
-                    <td class="p-3 border border-gray-700 text-blue-600">2025-01-09</td>
-                    <td class="p-3 border border-gray-700 text-blue-600">$700</td>
-                    <td class="p-3 border border-gray-700 text-blue-600">$700</td>
-                    <td class="p-3 border border-gray-700 text-blue-600">$0</td>
-                    <td class="p-3 border border-gray-700 text-blue-600">
-                        <button class="text-blue-600 hover:underline edit-invoice" data-id="INV002">Edit</button> |
-                        <button class="text-red-600 hover:underline delete-invoice" data-id="INV002">Delete</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Summary Section -->
-    <div class="mt-8 space-y-4">
-        <h3 class="text-2xl font-bold text-blue-700">Billing Summary</h3>
-        <div class="flex flex-wrap justify-between items-center">
-            <div class="w-full md:w-1/3 p-4 bg-blue-100 rounded-lg shadow">
-                <h4 class="text-xl font-semibold text-blue-600">Total Invoices</h4>
-                <p class="text-gray-700 text-2xl font-bold" id="totalInvoices">2</p>
-            </div>
-            <div class="w-full md:w-1/3 p-4 bg-green-100 rounded-lg shadow">
-                <h4 class="text-xl font-semibold text-green-600">Total Collected</h4>
-                <p class="text-gray-700 text-2xl font-bold" id="totalCollected">$1000</p>
-            </div>
-            <div class="w-full md:w-1/3 p-4 bg-yellow-100 rounded-lg shadow">
-                <h4 class="text-xl font-semibold text-yellow-600">Total Balance</h4>
-                <p class="text-gray-700 text-2xl font-bold" id="totalBalance">$200</p>
+        <section
+        id="billing"
+        class="fade-in hidden bg-white bg-opacity-90 rounded-lg shadow-lg p-6 space-y-8"
+    >
+        <!-- Title -->
+        <div class="text-center">
+            <h2 class="text-4xl font-bold text-blue-700">Billing Details</h2>
+            <p class="text-gray-700 mt-4">
+                Manage patient invoices and payment details efficiently.
+            </p>
+        </div>
+    
+        <!-- Add New Invoice Button -->
+        <div class="text-right">
+            <button
+                id="addInvoice"
+                class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition"
+            >
+                Add New Invoice
+            </button>
+        </div>
+    
+        <!-- Billing Table -->
+        <div class="overflow-x-auto mt-6">
+            <table
+                class="table-auto w-full text-left border-collapse border border-gray-300"
+            >
+                <thead>
+                    <tr class="bg-blue-100 text-blue-700">
+                        <th class="p-3 border border-gray-300">#</th>
+                        <th class="p-3 border border-gray-300">Invoice ID</th>
+                        <th class="p-3 border border-gray-300">Patient Name</th>
+                        <th class="p-3 border border-gray-300">Date</th>
+                        <th class="p-3 border border-gray-300">Total Amount</th>
+                        <th class="p-3 border border-gray-300">Paid</th>
+                        <th class="p-3 border border-gray-300">Balance</th>
+                        <th class="p-3 border border-gray-300">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="billingRows">
+                    <tr class="hover:bg-gray-100 transition">
+                        <td class="p-3 border border-gray-300 text-blue-600">1</td>
+                        <td class="p-3 border border-gray-300 text-blue-600">INV001</td>
+                        <td class="p-3 border border-gray-300 text-blue-600">
+                            John Doe
+                        </td>
+                        <td class="p-3 border border-gray-300 text-blue-600">
+                            2025-01-10
+                        </td>
+                        <td class="p-3 border border-gray-300 text-blue-600">
+                            $500
+                        </td>
+                        <td class="p-3 border border-gray-300 text-blue-600">
+                            $300
+                        </td>
+                        <td class="p-3 border border-gray-300 text-blue-600">
+                            $200
+                        </td>
+                        <td class="p-3 border border-gray-300">
+                            <button
+                                class="text-blue-600 hover:underline edit-invoice"
+                                data-id="INV001"
+                            >
+                                Edit
+                            </button>
+                            |
+                            <button
+                                class="text-red-600 hover:underline delete-invoice"
+                                data-id="INV001"
+                            >
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                    <tr class="hover:bg-gray-100 transition">
+                        <td class="p-3 border border-gray-300 text-blue-600">2</td>
+                        <td class="p-3 border border-gray-300 text-blue-600">INV002</td>
+                        <td class="p-3 border border-gray-300 text-blue-600">
+                            Jane Smith
+                        </td>
+                        <td class="p-3 border border-gray-300 text-blue-600">
+                            2025-01-09
+                        </td>
+                        <td class="p-3 border border-gray-300 text-blue-600">
+                            $700
+                        </td>
+                        <td class="p-3 border border-gray-300 text-blue-600">
+                            $700
+                        </td>
+                        <td class="p-3 border border-gray-300 text-blue-600">$0</td>
+                        <td class="p-3 border border-gray-300">
+                            <button
+                                class="text-blue-600 hover:underline edit-invoice"
+                                data-id="INV002"
+                            >
+                                Edit
+                            </button>
+                            |
+                            <button
+                                class="text-red-600 hover:underline delete-invoice"
+                                data-id="INV002"
+                            >
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    
+        <!-- Summary Section -->
+        <div class="mt-8 space-y-4">
+            <h3 class="text-2xl font-bold text-blue-700">Billing Summary</h3>
+            <div
+                class="flex flex-wrap justify-between items-center"
+            >
+                <div
+                    class="w-full md:w-1/3 p-4 bg-blue-100 rounded-lg shadow"
+                >
+                    <h4 class="text-xl font-semibold text-blue-600">
+                        Total Invoices
+                    </h4>
+                    <p
+                        class="text-gray-700 text-2xl font-bold"
+                        id="totalInvoices"
+                    >
+                        2
+                    </p>
+                </div>
+                <div
+                    class="w-full md:w-1/3 p-4 bg-green-100 rounded-lg shadow"
+                >
+                    <h4 class="text-xl font-semibold text-green-600">
+                        Total Collected
+                    </h4>
+                    <p
+                        class="text-gray-700 text-2xl font-bold"
+                        id="totalCollected"
+                    >
+                        $1000
+                    </p>
+                </div>
+                <div
+                    class="w-full md:w-1/3 p-4 bg-yellow-100 rounded-lg shadow"
+                >
+                    <h4 class="text-xl font-semibold text-yellow-600">
+                        Total Balance
+                    </h4>
+                    <p
+                        class="text-gray-700 text-2xl font-bold"
+                        id="totalBalance"
+                    >
+                        $200
+                    </p>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+    
+    <script>
+    // Get references to key elements
+    const addInvoiceBtn = document.getElementById("addInvoice");
+    const billingRows = document.getElementById("billingRows");
+    const totalInvoicesEl = document.getElementById("totalInvoices");
+    const totalCollectedEl = document.getElementById("totalCollected");
+    const totalBalanceEl = document.getElementById("totalBalance");
+    
+    // Utility to format currency
+    const formatCurrency = (amount) => `$${amount.toFixed(2)}`;
+    
+    // Utility to update summary
+    const updateSummary = () => {
+        const rows = billingRows.querySelectorAll("tr");
+        let totalInvoices = 0;
+        let totalCollected = 0;
+        let totalBalance = 0;
+    
+        rows.forEach((row) => {
+            const collected = parseFloat(row.querySelector("td:nth-child(6)").textContent.replace("$", ""));
+            const balance = parseFloat(row.querySelector("td:nth-child(7)").textContent.replace("$", ""));
+    
+            totalInvoices++;
+            totalCollected += collected;
+            totalBalance += balance;
+        });
+    
+        totalInvoicesEl.textContent = totalInvoices;
+        totalCollectedEl.textContent = formatCurrency(totalCollected);
+        totalBalanceEl.textContent = formatCurrency(totalBalance);
+    };
+    
+    // Add a new invoice
+    addInvoiceBtn.addEventListener("click", () => {
+        const newInvoiceId = `INV00${billingRows.children.length + 1}`;
+        const patientName = prompt("Enter patient name:");
+        const totalAmount = parseFloat(prompt("Enter total amount:"));
+        const paidAmount = parseFloat(prompt("Enter paid amount:"));
+        const balanceAmount = totalAmount - paidAmount;
+    
+        if (!patientName || isNaN(totalAmount) || isNaN(paidAmount)) {
+            alert("Invalid input. Please try again.");
+            return;
+        }
+    
+        const newRow = document.createElement("tr");
+        newRow.className = "hover:bg-gray-100 transition";
+        newRow.innerHTML = `
+            <td class="p-3 border border-gray-300 text-blue-600">${billingRows.children.length + 1}</td>
+            <td class="p-3 border border-gray-300 text-blue-600">${newInvoiceId}</td>
+            <td class="p-3 border border-gray-300 text-blue-600">${patientName}</td>
+            <td class="p-3 border border-gray-300 text-blue-600">${new Date().toISOString().split("T")[0]}</td>
+            <td class="p-3 border border-gray-300 text-blue-600">${formatCurrency(totalAmount)}</td>
+            <td class="p-3 border border-gray-300 text-blue-600">${formatCurrency(paidAmount)}</td>
+            <td class="p-3 border border-gray-300 text-blue-600">${formatCurrency(balanceAmount)}</td>
+            <td class="p-3 border border-gray-300">
+                <button class="text-blue-600 hover:underline edit-invoice" data-id="${newInvoiceId}">Edit</button> |
+                <button class="text-red-600 hover:underline delete-invoice" data-id="${newInvoiceId}">Delete</button>
+            </td>
+        `;
+        billingRows.appendChild(newRow);
+        updateSummary();
+    });
+    
+    // Delegate click events for editing and deleting
+    billingRows.addEventListener("click", (event) => {
+        const target = event.target;
+    
+        if (target.classList.contains("edit-invoice")) {
+            const row = target.closest("tr");
+            const invoiceId = row.querySelector("td:nth-child(2)").textContent;
+            const patientName = prompt("Enter new patient name:", row.querySelector("td:nth-child(3)").textContent);
+            const totalAmount = parseFloat(prompt("Enter new total amount:", row.querySelector("td:nth-child(5)").textContent.replace("$", "")));
+            const paidAmount = parseFloat(prompt("Enter new paid amount:", row.querySelector("td:nth-child(6)").textContent.replace("$", "")));
+    
+            if (!patientName || isNaN(totalAmount) || isNaN(paidAmount)) {
+                alert("Invalid input. Please try again.");
+                return;
+            }
+    
+            const balanceAmount = totalAmount - paidAmount;
+            row.querySelector("td:nth-child(3)").textContent = patientName;
+            row.querySelector("td:nth-child(5)").textContent = formatCurrency(totalAmount);
+            row.querySelector("td:nth-child(6)").textContent = formatCurrency(paidAmount);
+            row.querySelector("td:nth-child(7)").textContent = formatCurrency(balanceAmount);
+    
+            updateSummary();
+            alert(`Invoice ${invoiceId} updated successfully!`);
+        }
+    
+        if (target.classList.contains("delete-invoice")) {
+            const row = target.closest("tr");
+            const invoiceId = row.querySelector("td:nth-child(2)").textContent;
+    
+            if (confirm(`Are you sure you want to delete invoice ${invoiceId}?`)) {
+                row.remove();
+                updateSummary();
+                alert(`Invoice ${invoiceId} deleted successfully!`);
+            }
+        }
+    });
+    
+    // Initialize summary on page load
+    updateSummary();
+    </script>
+    
 
 
         <section id="login" class="fade-in hidden bg-white bg-opacity-90 rounded-lg shadow-lg p-6">
             <h2 class="text-3xl font-bold text-blue-700">Login</h2>
             <form class="mt-4">
-                <input type="email" placeholder="Email" class="w-full px-4 py-2 border rounded mb-4">
-                <input type="password" placeholder="Password" class="w-full px-4 py-2 border rounded mb-4">
+                <input type="email" placeholder="Email" class="w-full px-4 py-2 border rounded mb-4 text-blue-600">
+                <input type="password" placeholder="Password" class="w-full px-4 py-2 border rounded mb-4 text-blue-600">
                 <button class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Login</button>
             </form>
         </section>
